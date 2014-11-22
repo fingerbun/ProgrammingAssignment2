@@ -1,34 +1,61 @@
-###########################################################
-## R PRogramming MOOC Assigment 2
-## See Readme for more info
-###########################################################
+##
+## R Programming Assignment 2
+## ~~~~~~~~~~~~~~~~~~~~~~~~~~
+##
+## The solution is a minor adaption of the examples provided with the 
+## assignment. The cache logic is identical. The data types change from
+## a vector of numbers and a mean to a matrix and its inverse. The 
+## mean() function is replaced by solve. And there is some renaming.
+##
+## +------------------------------+-----------------------------------+
+## | Example Function             | Equivalent in assignment solution |
+## +------------------------------+-----------------------------------+
+## | makeVector                   | makeCacheMatrix. Takes a matrix as|
+## |                              |   input rather than a vector.     |
+## | get                          | get. Code is unchanged from the   |
+## |                              |   sample.                         |
+## | set                          | set. Code is unchanged from the   |
+## |                              |   sample.                         |
+## | getmean                      | getinverse. Function name and     |
+## |                              |   variable passed to it changed   |
+## | setmean                      | setinverse. Function name and     |
+## |                              |   variable passed to it changed   |
+## | cachemean                    | cachesolve. Calls "solve()" to get|
+## |                              |   inverse rather than mean() to   |
+## |                              |   get mean. Uses the              |
+## |                              |   makeMatrixCache$getinverse()    |
+## |                              |   function rather than get mean   |
+## +------------------------------+-----------------------------------+
 
-    
-##----------------------------------------------------------
-##   Name :         makeCacheMatrix
-##   Args :
-##   Description :  Creates a special "matrix" object that
-##                  can cache its inverse.
-##----------------------------------------------------------
-
+##---------------------------------------------------------------------
+## makeCacheMatrix
+##---------------------------------------------------------------------
 makeCacheMatrix <- function(x = matrix()) {
-
+  
+  m <- NULL
+  set <- function(y) {
+    x <<- y
+    m <<- NULL
+  }
+  get <- function() x
+  setinverse <- function(inverse) m <<- inverse
+  getinverse <- function() m
+  list(set = set, get = get,
+       setinverse = setinverse,
+       getinverse = getinverse)
 }
 
-
-## Write a short comment describing this function
-
-##----------------------------------------------------------
-##   Name :         cacheSolve
-##   Args :
-##   Description :  If the inverse of the matrix returned by
-##                  `makeCacheMatrix`has already been calculated 
-##                  and has not changed), retrieve from cache. 
-##                  Otherwise, calculate it.
-##----------------------------------------------------------
-
-
-
+##---------------------------------------------------------------------
+## cacheSolve
+##---------------------------------------------------------------------
 cacheSolve <- function(x, ...) {
-        ## Return a matrix that is the inverse of 'x'
+  m <- x$getinverse()
+  if(!is.null(m)) {
+    message("getting cached data")
+    return(m)
+  }
+  data <- x$get()
+  m <- solve(data, ...)
+  x$setinverse(m)
+  m
 }
