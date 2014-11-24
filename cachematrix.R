@@ -34,16 +34,22 @@ makeCacheMatrix <- function(x = matrix()) {
   
   m <- NULL
   set <- function(y) {
-    # Saves the original matrix passed
+    # Saves the original matrix passed to x
+    # Initialises the inverse (m) to NULL
     x <<- y
     m <<- NULL
   }
-  # Retrieves the original matrix passed
+  
+  # Retrieves the original matrix passed and saved with set()
   get <- function() x
-  # Saves the inverse matrix passed
+  
+  # Saves the inverse matrix passed. If needed,  
+  # we call this from cacheSolve.
   setinverse <- function(inverse) m <<- inverse
+  
   # Retrieves the inverse matrix passed
   getinverse <- function() m
+  
   # Returns a list of the functions created above so we can use them.
   list(set = set, get = get,
        setinverse = setinverse,
@@ -58,14 +64,16 @@ makeCacheMatrix <- function(x = matrix()) {
 cacheSolve <- function(x, ...) {
   # Get the inverse
   m <- x$getinverse()
+  
   # if m is not null we have previously saved an
   # inverse and can retrieve and return it.
   if(!is.null(m)) {
     message("getting cached data")
     return(m)
   }
+  
   # if m is null we don't have the inverse in cache. We have
-  # to calculate and return it. Bet we use our setinverse
+  # to calculate and return it.  While here we use our setinverse
   # function to cache it for next time.
   data <- x$get()
   m <- solve(data, ...)
